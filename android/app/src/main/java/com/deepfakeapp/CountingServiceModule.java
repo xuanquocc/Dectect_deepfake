@@ -1,5 +1,7 @@
 package com.deepfakeapp;
 
+import android.content.Intent;
+import android.provider.Settings;
 import android.util.Log;
 
 import com.facebook.react.bridge.ReactApplicationContext;
@@ -29,4 +31,12 @@ public class CountingServiceModule extends ReactContextBaseJavaModule {
     public void stopCounting() {
         countingService.stopCounting();
     }
+
+    @ReactMethod
+    public void allowPermission()
+    {
+        Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
+        getCurrentActivity().startActivity(intent);
+    }
+
 }

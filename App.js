@@ -25,12 +25,15 @@ const App = () => {
     setIsCounting(false);
     CountingService.stopCounting();
   };
-
+  const allow = () => {
+    CountingService.allowPermission();
+  }
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
       <Text style={{ fontSize: 24, marginBottom: 20 }}>Count: {count}</Text>
       <Button title="Start" onPress={startCounting} disabled={isCounting} />
       <Button title="Stop" onPress={stopCounting} disabled={!isCounting} />
+      <Button title="Allow permission" onPress={allow}/>
     </View>
   );
 };
