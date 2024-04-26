@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">deepfakeApp</string>
+    <string name="accessibility_service_description">Xem cái chó gì đ thích mô tả. Ok?</string>
 </resources>
