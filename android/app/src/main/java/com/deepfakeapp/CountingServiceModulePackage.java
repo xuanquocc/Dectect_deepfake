@@ -15,6 +15,7 @@ public class CountingServiceModulePackage implements ReactPackage {
     public List<NativeModule> createNativeModules(ReactApplicationContext reactContext) {
         List<NativeModule> modules = new ArrayList<>();
         modules.add(new CountingServiceModule(reactContext));
+        modules.add(new ScreenRecordModule(reactContext));
         return modules;
     }
 
