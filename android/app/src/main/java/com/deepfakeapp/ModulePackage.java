@@ -9,12 +9,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class CountingServiceModulePackage implements ReactPackage {
+public class ModulePackage implements ReactPackage {
 
     @Override
     public List<NativeModule> createNativeModules(ReactApplicationContext reactContext) {
         List<NativeModule> modules = new ArrayList<>();
-        modules.add(new CountingServiceModule(reactContext));
+        modules.add(new BoundServiceModule(reactContext));
         modules.add(new ScreenRecordModule(reactContext));
         return modules;
     }

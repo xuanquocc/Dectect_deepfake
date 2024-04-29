@@ -7,14 +7,14 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
 
-public class CountingService extends Service {
-    private static final String TAG = "CountingService";
+public class BoundService extends Service {
+    private static final String TAG = "BoundService";
     private final IBinder binder = new LocalBinder();
     private MediaPlayer mediaPlayer;
     private AppChecker appChecker;
     public class LocalBinder extends Binder {
-        CountingService getService() {
-            return CountingService.this;
+        BoundService getService() {
+            return BoundService.this;
         }   
     }
 
@@ -23,25 +23,25 @@ public class CountingService extends Service {
         return binder;
     }
 
-    public void startCounting() {
+    public void startMusic() {
         if(mediaPlayer == null){
             mediaPlayer = MediaPlayer.create(getApplicationContext(),R.raw.music);
         }
         mediaPlayer.start();
     }
 
-    public void stopCounting() {
+    public void stopMusic() {
         mediaPlayer.pause();
     }
 
-        @Override
-    public void onCreate() {
-        super.onCreate();
-        appChecker = new AppChecker(getApplicationContext()); 
-        if (appChecker.isAppRunning("com.facebook.orca")) {
-            Log.v("Checker","messenger is running");
-        }
-    }
+//    @Override
+//    public void onCreate() {
+//        super.onCreate();
+//        appChecker = new AppChecker(getApplicationContext());
+//        if (appChecker.isAppRunning("com.facebook.orca")) {
+//            Log.v("Checker","messenger is running");
+//        }
+//    }
 
     @Override
     public void onDestroy() {

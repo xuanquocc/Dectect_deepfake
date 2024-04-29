@@ -12,16 +12,16 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 
-public class CountingServiceModule extends ReactContextBaseJavaModule {
-    private static final String TAG = "CountingServiceModule";
-    private CountingService countingService;
+public class BoundServiceModule extends ReactContextBaseJavaModule {
+    private static final String TAG = "BoundServiceModule";
+    private BoundService boundService;
     private Boolean isServiceConnected;
     private ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-            CountingService.LocalBinder myBinder = (CountingService.LocalBinder) iBinder;
-            countingService = myBinder.getService();
-            countingService.startCounting();
+            BoundService.LocalBinder myBinder = (BoundService.LocalBinder) iBinder;
+            boundService = myBinder.getService();
+            boundService.startMusic();
             isServiceConnected = true;
         }
 
@@ -30,9 +30,9 @@ public class CountingServiceModule extends ReactContextBaseJavaModule {
             isServiceConnected = false;
         }
     };
-    public CountingServiceModule(ReactApplicationContext reactContext) {
+    public BoundServiceModule(ReactApplicationContext reactContext) {
         super(reactContext);
-        countingService = new CountingService();
+        boundService = new BoundService();
     }
 
     @Override
@@ -41,15 +41,15 @@ public class CountingServiceModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void startCounting() {
+    public void startMusic() {
         Log.d("Start from React Native","Start music");
-        Intent intent = new Intent(getCurrentActivity(), CountingService.class);
+        Intent intent = new Intent(getCurrentActivity(), BoundService.class);
         getCurrentActivity().bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
     }
 
     @ReactMethod
-    public void stopCounting() {
-        countingService.stopCounting();
+    public void stopMusic() {
+        boundService.stopMusic();
     }
 
     @ReactMethod

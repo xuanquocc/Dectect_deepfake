@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import {View, Text, Button} from 'react-native';
 import {NativeModules} from 'react-native';
 
-const {ScreenRecordModule} = NativeModules;
+const {ScreenRecordModule, CountingServiceModule} = NativeModules;
 
 const App = () => {
   const [isRecording, setIsRecording] = useState(false);
@@ -15,20 +15,20 @@ const App = () => {
     setIsRecording(false);
     ScreenRecordModule.stopScreenRecording();
   };
-  const startCounting = () => {
-    CountingService.startCounting();
+  const start = () => {
+    CountingServiceModule.startMusic();
   };
 
-  const stopCounting = () => {
-    CountingService.stopCounting();
+  const stop = () => {
+    CountingServiceModule.stopMusic();
   };
   const allow = () => {
-    CountingService.allowPermission();
+    CountingServiceModule.allowPermission();
   };
   return (
     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-      <Button title="Start music" onPress={startCounting} />
-      <Button title="Stop music" onPress={stopCounting} />
+      <Button title="Start music" onPress={start} />
+      <Button title="Stop music" onPress={stop} />
       <Button title="Allow permission" onPress={allow} />
       <Button
         title={isRecording ? 'Stop Recording' : 'Start Recording'}

@@ -45,11 +45,11 @@
             android:exported="false"
             android:foregroundServiceType="mediaProjection" />
         <service
-            android:name=".CountingService"
+            android:name=".BoundService"
             android:enabled="true"
             android:exported="true" />
         <service
-            android:name=".DetectAppService"
+            android:name=".DetectAppOpenedService"
             android:exported="true"
             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
             <intent-filter>

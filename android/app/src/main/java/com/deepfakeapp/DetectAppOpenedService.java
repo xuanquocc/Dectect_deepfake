@@ -4,29 +4,28 @@ import android.accessibilityservice.AccessibilityService;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 
-public class DetectAppService extends AccessibilityService {
-    private CountingService boundService;
+public class DetectAppOpenedService extends AccessibilityService {
+    private BoundService boundService;
     private boolean isBound;
     private ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            CountingService.LocalBinder binder = (CountingService.LocalBinder) service;
+            BoundService.LocalBinder binder = (BoundService.LocalBinder) service;
             boundService = binder.getService();
             isBound = true;
 
-            Log.d("DetectAppService", "Service connected");
+            Log.d("DetectAppOpenedService", "Service connected");
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
             isBound = false;
-            Log.d("DetectAppService", "Service disconnected");
+            Log.d("DetectAppOpenedService", "Service disconnected");
         }
     };
 
@@ -44,11 +43,11 @@ public class DetectAppService extends AccessibilityService {
         if (event.getEventType() == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
             String currentApp = event.getPackageName().toString();
             Log.e("App", "App is " + currentApp);
-            Intent intent = new Intent(this, CountingService.class);
+            Intent intent = new Intent(this, BoundService.class);
             if (currentApp != null && ("com.facebook.orca".equals(currentApp) || "com.zing.zalo".equals(currentApp) )) {
                 if (!isBound) {
                     bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
-                    Log.e("DetectAppService", "Bind CountingService successfully");
+                    Log.e("DetectAppOpenedService", "Bind BoundService successfully");
                 }
             }
         }
@@ -57,7 +56,7 @@ public class DetectAppService extends AccessibilityService {
 
     @Override
     public void onInterrupt() {
-        Log.e("DetectAppService", "Accessibility service interrupted");
+        Log.e("DetectAppOpenedService", "Accessibility service interrupted");
     }
 
     @Override
