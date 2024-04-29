@@ -1,39 +1,39 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, Button } from 'react-native';
-import CountingService from './src/modules/CountingServiceModule';
+import React, { useEffect } from 'react';
+import { View, Text } from 'react-native';
 
 const App = () => {
-  const [count, setCount] = useState(0);
-  const [isCounting, setIsCounting] = useState(false);
-
   useEffect(() => {
-    const interval = setInterval(() => {
-      if (isCounting) {
-        setCount((prevCount) => prevCount + 1);
+    const uploadVideo = async () => {
+      try {
+        const videoData = new FormData();
+        videoData.append('video_file', {
+          uri: 'file:///C:/Users/Admin/Desktop/Deepfake/src/assets/video/real_1.mp4',
+          type: 'video/mp4',
+          name: 'real_1.mp4',
+        });
+
+        const response = await fetch("https://api-deepfake-detection-1.onrender.com/upload-video/", {
+          method: 'POST',
+          body: videoData,
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+
+        const data = await response.json();
+        console.log(data);
+      } catch (error) {
+        console.error(error);
       }
-    }, 1000);
+    };
 
-    return () => clearInterval(interval);
-  }, [isCounting]);
+    uploadVideo();
+  }, []);
 
-  const startCounting = () => {
-    setIsCounting(true);
-    CountingService.startCounting();
-  };
-
-  const stopCounting = () => {
-    setIsCounting(false);
-    CountingService.stopCounting();
-  };
-  const allow = () => {
-    CountingService.allowPermission();
-  }
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text style={{ fontSize: 24, marginBottom: 20 }}>Count: {count}</Text>
-      <Button title="Start" onPress={startCounting} disabled={isCounting} />
-      <Button title="Stop" onPress={stopCounting} disabled={!isCounting} />
-      <Button title="Allow permission" onPress={allow}/>
+      <Text>hello</Text>
     </View>
   );
 };
