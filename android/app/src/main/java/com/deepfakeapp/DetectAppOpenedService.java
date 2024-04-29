@@ -30,8 +30,17 @@ public class DetectAppService extends AccessibilityService {
         }
     };
 
+//    @Override
+//    public void onCreate() {
+//        super.onCreate();
+//        if (appChecker.isAppRunning("com.facebook.orca")) {
+//            Log.v("Checker","messenger is running");
+//        }
+//    }
+
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {
+
         if (event.getEventType() == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
             String currentApp = event.getPackageName().toString();
             Log.e("App", "App is " + currentApp);

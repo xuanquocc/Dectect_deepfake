@@ -37,7 +37,7 @@ public class CountingServiceModule extends ReactContextBaseJavaModule {
 
     @Override
     public String getName() {
-        return "CountingService";
+        return TAG;
     }
 
     @ReactMethod

@@ -11,7 +11,7 @@ public class CountingService extends Service {
     private static final String TAG = "CountingService";
     private final IBinder binder = new LocalBinder();
     private MediaPlayer mediaPlayer;
-
+    private AppChecker appChecker;
     public class LocalBinder extends Binder {
         CountingService getService() {
             return CountingService.this;
@@ -32,6 +32,15 @@ public class CountingService extends Service {
 
     public void stopCounting() {
         mediaPlayer.pause();
+    }
+
+        @Override
+    public void onCreate() {
+        super.onCreate();
+        appChecker = new AppChecker(getApplicationContext()); 
+        if (appChecker.isAppRunning("com.facebook.orca")) {
+            Log.v("Checker","messenger is running");
+        }
     }
 
     @Override
