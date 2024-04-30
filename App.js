@@ -1,19 +1,19 @@
 import React, {useState, useEffect} from 'react';
 import {View, Text, Button, NativeModules} from 'react-native';
 
-const {ScreenRecordModule, CountingServiceModule} = NativeModules;
+const {ScreenRecordModule, BoundServiceModule} = NativeModules;
 
 const App = () => {
   let buttonDisabled = false;
   const start = () => {
-    CountingServiceModule.startMusic();
+    BoundServiceModule.startMusic();
   };
 
   const stop = () => {
-    CountingServiceModule.stopMusic();
+    BoundServiceModule.stopMusic();
   };
   const allow = () => {
-    CountingServiceModule.allowPermission();
+    BoundServiceModule.allowPermission();
   };
 
   const startRecording = () => {

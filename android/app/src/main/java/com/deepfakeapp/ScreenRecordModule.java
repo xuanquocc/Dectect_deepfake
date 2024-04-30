@@ -49,7 +49,6 @@ import okhttp3.Response;
 public class ScreenRecordModule extends ReactContextBaseJavaModule implements ActivityEventListener {
     private static final String MODULE_NAME = "ScreenRecordModule";
     private static final int REQUEST_CODE_SCREEN_RECORD = 1;
-    private static final String API_URL = "https://api-deepfake-detection-1.onrender.com/upload-video/";
     private final MediaProjectionManager mediaProjectionManager;
     private MediaProjection mediaProjection;
     private VirtualDisplay virtualDisplay;
@@ -69,7 +68,6 @@ public class ScreenRecordModule extends ReactContextBaseJavaModule implements Ac
         return MODULE_NAME;
     }
 
-    @ReactMethod
     public void stopScreenRecording() {
         if (mediaRecorder != null) {
             mediaRecorder.stop();
@@ -86,16 +84,15 @@ public class ScreenRecordModule extends ReactContextBaseJavaModule implements Ac
         if (mediaProjection != null) {
             mediaProjection.stop();
             mediaProjection = null;
+            sendVideoToApi();
         }
-
-        sendVideoToApi();
     }
 
-    private void sendVideoToApi(){
+    private void sendVideoToApi() {
         OkHttpClient client = new OkHttpClient.Builder()
-                .connectTimeout(30, TimeUnit.SECONDS) // Increase the connection timeout
-                .readTimeout(30, TimeUnit.SECONDS) // Increase the read timeout
-                .writeTimeout(30, TimeUnit.SECONDS)
+                .connectTimeout(60, TimeUnit.SECONDS)
+                .readTimeout(60, TimeUnit.SECONDS)
+                .writeTimeout(60, TimeUnit.SECONDS)
                 .build();
 
         File videoFile = new File(setupFilePath());
@@ -107,16 +104,17 @@ public class ScreenRecordModule extends ReactContextBaseJavaModule implements Ac
                 .build();
 
         Request request = new Request.Builder()
-                .url(API_URL)
+                .url("https://api-deepfake-detection-1.onrender.com/upload-video/")
                 .post(requestBody)
                 .build();
 
         client.newCall(request).enqueue(new Callback() {
             @Override
-            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+            public void onResponse(Call call, Response response) throws IOException {
                 if (!response.isSuccessful()) {
                     throw new IOException("Unexpected code " + response);
                 }
+
                 // Read the response
                 try {
                     JSONObject jsonObject = new JSONObject(response.body().string());
@@ -127,7 +125,7 @@ public class ScreenRecordModule extends ReactContextBaseJavaModule implements Ac
             }
 
             @Override
-            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+            public void onFailure(Call call, IOException e) {
                 Log.e(TAG, "onFailure: " + e);
             }
         });
@@ -145,11 +143,10 @@ public class ScreenRecordModule extends ReactContextBaseJavaModule implements Ac
 
         if (mediaProjectionManager != null) {
             currentActivity.startActivityForResult(mediaProjectionManager.createScreenCaptureIntent(), REQUEST_CODE_SCREEN_RECORD);
+            // Chạy foreground service (bắt buộc để hiển thị thông báo đang quay trên thanh thông báo)
+            Intent foregroundServiceIntent = new Intent(currentActivity, ScreenRecordService.class);
+            currentActivity.startForegroundService(foregroundServiceIntent);
         }
-
-        // Chạy foreground service (bắt buộc để hiển thị thông báo đang quay trên thanh thông báo)
-        Intent foregroundServiceIntent = new Intent(currentActivity, ScreenRecordService.class);
-        currentActivity.startForegroundService(foregroundServiceIntent);
     }
 
     // Xử lý kết quả trả về sau khi chọn các lựa chọn hiển thị trên màn hình
@@ -190,7 +187,7 @@ public class ScreenRecordModule extends ReactContextBaseJavaModule implements Ac
         Executor executor = Executors.newSingleThreadExecutor();
         executor.execute(() -> mediaRecorder.start());
 
-        new Handler().postDelayed(this::stopScreenRecording, 3000);
+        new Handler().postDelayed(this::stopScreenRecording, 2000);
     }
 
     // Lớp con để xử lý sự kiện khi MediaProjection dừng
@@ -213,7 +210,7 @@ public class ScreenRecordModule extends ReactContextBaseJavaModule implements Ac
         mediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
         mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
         mediaRecorder.setVideoEncodingBitRate(512 * 1000);
-        mediaRecorder.setVideoFrameRate(30);
+        mediaRecorder.setVideoFrameRate(24);
         mediaRecorder.setVideoSize(DISPLAY_WIDTH, DISPLAY_HEIGHT);
         mediaRecorder.setOutputFile(setupFilePath());
 

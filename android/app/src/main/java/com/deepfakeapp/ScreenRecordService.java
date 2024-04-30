@@ -5,11 +5,7 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.IBinder;
-
-import androidx.core.app.ActivityCompat;
-import androidx.core.app.NotificationManagerCompat;
 
 public class ScreenRecordService extends Service {
     private static final int NOTIFICATION_ID = 1;
@@ -42,14 +38,7 @@ public class ScreenRecordService extends Service {
                     .setSmallIcon(R.mipmap.ic_launcher)
                     .build();
             startForeground(NOTIFICATION_ID, notification);
-            // Create a notification channel for the foreground service
-            NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(this);
-            if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-                return START_NOT_STICKY;
-            }
-            notificationManagerCompat.notify(NOTIFICATION_ID, notification);
         }
-
         return START_STICKY;
     }
 
