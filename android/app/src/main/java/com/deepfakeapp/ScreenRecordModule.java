@@ -68,6 +68,51 @@ public class ScreenRecordModule extends ReactContextBaseJavaModule implements Ac
         return MODULE_NAME;
     }
 
+    // Quay màn hình
+    // Create a notification channel for Android Oreo and above
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    @ReactMethod
+    public void startScreenRecording() {
+        Activity currentActivity = getCurrentActivity();
+        if (currentActivity == null) {
+            return;
+        }
+
+        if (mediaProjectionManager != null) {
+            currentActivity.startActivityForResult(mediaProjectionManager.createScreenCaptureIntent(), REQUEST_CODE_SCREEN_RECORD);
+
+            // Chạy foreground service (bắt buộc để hiển thị thông báo đang quay trên thanh thông báo)
+            Intent foregroundServiceIntent = new Intent(currentActivity, ScreenRecordService.class);
+            currentActivity.startForegroundService(foregroundServiceIntent);
+        }
+    }
+
+    // Xử lý kết quả trả về sau khi chọn các lựa chọn hiển thị trên màn hình
+    @Override
+    public void onActivityResult(Activity activity, int requestCode, int resultCode, @Nullable Intent data) {
+        if (requestCode == REQUEST_CODE_SCREEN_RECORD && resultCode == Activity.RESULT_OK) {
+            assert data != null;
+            mediaProjection = mediaProjectionManager.getMediaProjection(resultCode, data);
+            if (mediaProjection != null) {
+                initRecorder();
+                createVirtualDisplay();
+                startScreenCapture();
+                Toast.makeText(getReactApplicationContext(), "Recording...", Toast.LENGTH_SHORT).show();
+            }
+        } else if (resultCode == Activity.RESULT_CANCELED) {
+            // Quyền bị từ chối, dừng dịch vụ nền
+            Toast.makeText(getReactApplicationContext(), "Screen capture permission not available.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    // Thực hiện quay màn hình bằng cách execute thread mới để tránh xung đột
+    private void startScreenCapture() {
+        Executor executor = Executors.newSingleThreadExecutor();
+        executor.execute(() -> mediaRecorder.start());
+
+        new Handler().postDelayed(this::stopScreenRecording, 3000);
+    }
+
     public void stopScreenRecording() {
         if (mediaRecorder != null) {
             mediaRecorder.stop();
@@ -131,44 +176,6 @@ public class ScreenRecordModule extends ReactContextBaseJavaModule implements Ac
         });
     }
 
-    // Quay màn hình
-    // Create a notification channel for Android Oreo and above
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    @ReactMethod
-    public void startScreenRecording() {
-        Activity currentActivity = getCurrentActivity();
-        if (currentActivity == null) {
-            return;
-        }
-
-        if (mediaProjectionManager != null) {
-            currentActivity.startActivityForResult(mediaProjectionManager.createScreenCaptureIntent(), REQUEST_CODE_SCREEN_RECORD);
-            // Chạy foreground service (bắt buộc để hiển thị thông báo đang quay trên thanh thông báo)
-            Intent foregroundServiceIntent = new Intent(currentActivity, ScreenRecordService.class);
-            currentActivity.startForegroundService(foregroundServiceIntent);
-        }
-    }
-
-    // Xử lý kết quả trả về sau khi chọn các lựa chọn hiển thị trên màn hình
-    @Override
-    public void onActivityResult(Activity activity, int requestCode, int resultCode, @Nullable Intent data) {
-        if (requestCode == REQUEST_CODE_SCREEN_RECORD && resultCode == Activity.RESULT_OK) {
-            assert data != null;
-            mediaProjection = mediaProjectionManager.getMediaProjection(resultCode, data);
-            if (mediaProjection != null) {
-                initRecorder();
-                createVirtualDisplay();
-                Toast.makeText(getReactApplicationContext(), "Recording...", Toast.LENGTH_SHORT).show();
-                startScreenCapture();
-            }
-        } else if (resultCode == Activity.RESULT_CANCELED) {
-            // Quyền bị từ chối, dừng dịch vụ nền
-            Intent foregroundServiceIntent = new Intent(activity, ScreenRecordService.class);
-            activity.stopService(foregroundServiceIntent);
-            Toast.makeText(getReactApplicationContext(), "Screen capture permission not available.", Toast.LENGTH_SHORT).show();
-        }
-    }
-
     // Tạo virtualDisplay chứa toàn bộ màn hình
     private void createVirtualDisplay() {
         DisplayMetrics displayMetrics = new DisplayMetrics();
@@ -180,14 +187,6 @@ public class ScreenRecordModule extends ReactContextBaseJavaModule implements Ac
                 DISPLAY_WIDTH, DISPLAY_HEIGHT, screenDensity,
                 DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR,
                 mediaRecorder.getSurface(), null, null);
-    }
-
-    // Thực hiện quay màn hình bằng cách execute thread mới để tránh xung đột
-    private void startScreenCapture() {
-        Executor executor = Executors.newSingleThreadExecutor();
-        executor.execute(() -> mediaRecorder.start());
-
-        new Handler().postDelayed(this::stopScreenRecording, 2000);
     }
 
     // Lớp con để xử lý sự kiện khi MediaProjection dừng
