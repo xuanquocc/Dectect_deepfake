@@ -16,6 +16,7 @@ public class ModulePackage implements ReactPackage {
         List<NativeModule> modules = new ArrayList<>();
         modules.add(new BoundServiceModule(reactContext));
         modules.add(new ScreenRecordModule(reactContext));
+        modules.add(new CallDetectionModule(reactContext));
         return modules;
     }
 

@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import {View, Text, Button} from 'react-native';
 import {NativeModules} from 'react-native';
 
-const {ScreenRecordModule, CountingServiceModule} = NativeModules;
+const {ScreenRecordModule, BoundServiceModule, CallDetectionModule} = NativeModules;
 
 const App = () => {
   const [isRecording, setIsRecording] = useState(false);
@@ -15,16 +15,24 @@ const App = () => {
     setIsRecording(false);
     ScreenRecordModule.stopScreenRecording();
   };
+
+  const startDetected =  () => {
+    CallDetectionModule.startCallDetectionService();
+  };
   const start = () => {
-    CountingServiceModule.startMusic();
+    BoundServiceModule.startMusic();
   };
 
   const stop = () => {
-    CountingServiceModule.stopMusic();
+    BoundServiceModule.stopMusic();
   };
   const allow = () => {
-    CountingServiceModule.allowPermission();
+    BoundServiceModule.allowPermission();
   };
+
+  useEffect(() => {
+    startDetected()
+  }, []);
   return (
     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
       <Button title="Start music" onPress={start} />
