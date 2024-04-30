@@ -1,6 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, Button} from 'react-native';
-import {NativeModules} from 'react-native';
+import {View, Text, Button, NativeModules} from 'react-native';
 
 const {ScreenRecordModule, CountingServiceModule} = NativeModules;
 
