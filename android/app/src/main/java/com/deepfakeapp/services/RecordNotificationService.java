@@ -1,4 +1,4 @@
-package com.deepfakeapp;
+package com.deepfakeapp.services;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -7,7 +7,9 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 
-public class ScreenRecordService extends Service {
+import com.deepfakeapp.R;
+
+public class RecordNotificationService extends Service {
     private static final int NOTIFICATION_ID = 1;
     private static final String CHANNEL_ID = "ScreenRecordServiceChannel";
 

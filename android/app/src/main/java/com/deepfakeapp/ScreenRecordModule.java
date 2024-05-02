@@ -23,6 +23,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
+import com.deepfakeapp.services.RecordNotificationService;
 import com.facebook.react.bridge.ActivityEventListener;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
@@ -82,7 +83,7 @@ public class ScreenRecordModule extends ReactContextBaseJavaModule implements Ac
             currentActivity.startActivityForResult(mediaProjectionManager.createScreenCaptureIntent(), REQUEST_CODE_SCREEN_RECORD);
 
             // Chạy foreground service (bắt buộc để hiển thị thông báo đang quay trên thanh thông báo)
-            Intent foregroundServiceIntent = new Intent(currentActivity, ScreenRecordService.class);
+            Intent foregroundServiceIntent = new Intent(currentActivity, RecordNotificationService.class);
             currentActivity.startForegroundService(foregroundServiceIntent);
         }
     }
@@ -155,7 +156,7 @@ public class ScreenRecordModule extends ReactContextBaseJavaModule implements Ac
 
         client.newCall(request).enqueue(new Callback() {
             @Override
-            public void onResponse(Call call, Response response) throws IOException {
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (!response.isSuccessful()) {
                     throw new IOException("Unexpected code " + response);
                 }
@@ -170,7 +171,7 @@ public class ScreenRecordModule extends ReactContextBaseJavaModule implements Ac
             }
 
             @Override
-            public void onFailure(Call call, IOException e) {
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 Log.e(TAG, "onFailure: " + e);
             }
         });
