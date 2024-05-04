@@ -11,13 +11,17 @@ import android.os.IBinder;
 
 import com.deepfakeapp.R;
 
-public class RecordNotificationService extends Service {
-    private static final int NOTIFICATION_ID = 2;
-    private static final String CHANNEL_ID = "ScreenRecordServiceChannel";
+public class NotificationToRecordService extends Service {
+    private int NOTIFICATION_ID;
+    private String CHANNEL_ID;
 
     @Override
     public void onCreate() {
         super.onCreate();
+
+        NOTIFICATION_ID = getApplicationContext().getResources().getInteger(R.integer.NOTIFICATION_2);
+        CHANNEL_ID = getApplicationContext().getResources().getString(R.string.CHANNEL_2);
+
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(
                     CHANNEL_ID,
@@ -35,7 +39,7 @@ public class RecordNotificationService extends Service {
         super.onStartCommand(intent, flags, startId);
 
         // Create a notification for the foreground service
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             Notification notification = new Notification.Builder(this, CHANNEL_ID)
                     .setContentTitle("Recording Service")
                     .setContentText("Recording in progress...")

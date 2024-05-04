@@ -14,12 +14,16 @@ import com.deepfakeapp.R;
 import com.deepfakeapp.ScreenRecordActivity;
 
 public class NotificationToOpenAppService extends Service {
-    private static final int NOTIFICATION_ID = 1;
-    private static final String CHANNEL_ID = "NotificationToOpenAppServiceChannel";
+    private int NOTIFICATION_ID;
+    private String CHANNEL_ID;
 
     @Override
     public void onCreate() {
         super.onCreate();
+
+        NOTIFICATION_ID = getApplicationContext().getResources().getInteger(R.integer.NOTIFICATION_1);
+        CHANNEL_ID = getApplicationContext().getResources().getString(R.string.CHANNEL_1);
+
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(
                     CHANNEL_ID,

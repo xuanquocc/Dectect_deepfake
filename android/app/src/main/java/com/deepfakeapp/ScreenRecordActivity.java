@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.hardware.display.DisplayManager;
 import android.hardware.display.VirtualDisplay;
 import android.media.MediaRecorder;
@@ -30,7 +31,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.deepfakeapp.services.RecordNotificationService;
+import com.deepfakeapp.services.NotificationToRecordService;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -51,12 +52,14 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class ScreenRecordActivity extends AppCompatActivity {
+    private String FILE_NAME;
     private MediaProjectionManager mediaProjectionManager;
     private MediaProjection mediaProjection;
     private VirtualDisplay virtualDisplay;
     private MediaRecorder mediaRecorder;
-    private final int DISPLAY_WIDTH = 720;
-    private final int DISPLAY_HEIGHT = 1280;
+    private int DISPLAY_WIDTH;
+    private int DISPLAY_HEIGHT;
+    private Resources res;
 
     ActivityResultLauncher<Intent> mGetContent = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
             result -> {
@@ -86,13 +89,19 @@ public class ScreenRecordActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        res = getApplicationContext().getResources();
+        FILE_NAME = res.getString(R.string.FILE_NAME);
+        DISPLAY_WIDTH = res.getInteger(R.integer.DISPLAY_WIDTH);
+        DISPLAY_HEIGHT = res.getInteger(R.integer.DISPLAY_HEIGHT);
+
         mediaProjectionManager = (MediaProjectionManager) getSystemService(Context.MEDIA_PROJECTION_SERVICE);
 
         mGetContent.launch(mediaProjectionManager.createScreenCaptureIntent());
 
         // Chạy foreground service (bắt buộc để hiển thị thông báo đang quay trên thanh thông báo)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            Intent foregroundServiceIntent = new Intent(this, RecordNotificationService.class);
+            Intent foregroundServiceIntent = new Intent(this, NotificationToRecordService.class);
             startForegroundService(foregroundServiceIntent);
         }
     }
@@ -102,6 +111,8 @@ public class ScreenRecordActivity extends AppCompatActivity {
     private void startScreenCapture() {
         Executor executor = Executors.newSingleThreadExecutor();
         executor.execute(() -> mediaRecorder.start());
+
+        finish();
 
         new Handler().postDelayed(this::stopScreenRecording, 3000);
     }
@@ -123,7 +134,6 @@ public class ScreenRecordActivity extends AppCompatActivity {
             mediaProjection.stop();
             mediaProjection = null;
             sendVideoToApi();
-            finish();
         }
     }
 
@@ -138,17 +148,15 @@ public class ScreenRecordActivity extends AppCompatActivity {
 
     private void sendVideoToApi() {
         OkHttpClient client = new OkHttpClient.Builder()
-                .connectTimeout(60, TimeUnit.SECONDS)
-                .readTimeout(60, TimeUnit.SECONDS)
-                .writeTimeout(60, TimeUnit.SECONDS)
+                .connectTimeout(120, TimeUnit.SECONDS)
+                .readTimeout(120, TimeUnit.SECONDS)
+                .writeTimeout(120, TimeUnit.SECONDS)
                 .build();
-
-        File videoFile = new File(setupFilePath());
 
         RequestBody requestBody = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
-                .addFormDataPart("video_file", videoFile.getName(),
-                        RequestBody.create(videoFile, MediaType.parse("video/mp4")))
+                .addFormDataPart("video_file", FILE_NAME,
+                        RequestBody.create(new File(setupFilePath()), MediaType.parse("video/mp4")))
                 .build();
 
         Request request = new Request.Builder()
@@ -214,6 +222,20 @@ public class ScreenRecordActivity extends AppCompatActivity {
         mediaRecorder.setVideoEncodingBitRate(512 * 1000);
         mediaRecorder.setVideoFrameRate(30);
         mediaRecorder.setVideoSize(DISPLAY_WIDTH, DISPLAY_HEIGHT);
+
+        File file = new File(setupFilePath());
+        if (file.exists()) {
+            // Nếu tệp tồn tại, xóa nó
+            boolean deleted = file.delete();
+            if (deleted) {
+                Log.d(TAG, "File deleted successfully");
+            } else {
+                Log.e(TAG, "Failed to delete file");
+            }
+        } else {
+            Log.d(TAG, "File does not exist");
+        }
+
         mediaRecorder.setOutputFile(setupFilePath());
 
         try {
@@ -228,7 +250,7 @@ public class ScreenRecordActivity extends AppCompatActivity {
         File directory = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES), "DeepfakeApp");
 
         // Tạo đường dẫn đầy đủ của file
-        String filePath = directory.getAbsolutePath() + "/deepfake_check.mp4";
+        String filePath = directory.getAbsolutePath() + "/" + FILE_NAME;
 
         // Tạo thư mục nếu nó không tồn tại
         if (!directory.exists()) {
