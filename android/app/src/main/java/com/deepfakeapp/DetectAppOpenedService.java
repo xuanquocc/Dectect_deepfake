@@ -18,8 +18,6 @@ public class DetectAppOpenedService extends AccessibilityService {
             BoundService.LocalBinder binder = (BoundService.LocalBinder) service;
             boundService = binder.getService();
             isBound = true;
-
-            Log.d("DetectAppOpenedService", "Service connected");
         }
 
         @Override
@@ -42,9 +40,8 @@ public class DetectAppOpenedService extends AccessibilityService {
 
         if (event.getEventType() == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
             String currentApp = event.getPackageName().toString();
-            Log.e("App", "App is " + currentApp);
             Intent intent = new Intent(this, BoundService.class);
-            if (currentApp != null && ("com.facebook.orca".equals(currentApp) || "com.zing.zalo".equals(currentApp) )) {
+            if (("com.facebook.orca".equals(currentApp) || "com.zing.zalo".equals(currentApp))) {
                 if (!isBound) {
                     bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
                     Log.e("DetectAppOpenedService", "Bind BoundService successfully");
