@@ -1,28 +1,32 @@
-package com.deepfakeapp;
+package com.deepfakeapp.services;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Intent;
-import android.content.pm.PackageManager;
+import android.content.pm.ServiceInfo;
+import android.os.Build;
 import android.os.IBinder;
 
-import androidx.core.app.ActivityCompat;
-import androidx.core.app.NotificationManagerCompat;
+import com.deepfakeapp.R;
 
-public class ScreenRecordService extends Service {
-    private static final int NOTIFICATION_ID = 1;
-    private static final String CHANNEL_ID = "ScreenRecordServiceChannel";
+public class NotificationToRecordService extends Service {
+    private int NOTIFICATION_ID;
+    private String CHANNEL_ID;
 
     @Override
     public void onCreate() {
         super.onCreate();
+
+        NOTIFICATION_ID = getApplicationContext().getResources().getInteger(R.integer.NOTIFICATION_2);
+        CHANNEL_ID = getApplicationContext().getResources().getString(R.string.CHANNEL_2);
+
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(
                     CHANNEL_ID,
                     "Recording Screen",
-                    NotificationManager.IMPORTANCE_DEFAULT
+                    NotificationManager.IMPORTANCE_LOW
             );
             NotificationManager notificationManager = getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(channel);
@@ -41,21 +45,11 @@ public class ScreenRecordService extends Service {
                     .setContentText("Recording in progress...")
                     .setSmallIcon(R.mipmap.ic_launcher)
                     .build();
-            startForeground(NOTIFICATION_ID, notification);
-            // Create a notification channel for the foreground service
-            NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(this);
-            if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-                return START_NOT_STICKY;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                startForeground(NOTIFICATION_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PROJECTION);
             }
-            notificationManagerCompat.notify(NOTIFICATION_ID, notification);
         }
-
         return START_STICKY;
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
     }
 
     @Override

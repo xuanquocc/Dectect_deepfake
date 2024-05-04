@@ -1,6 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, Button} from 'react-native';
-import {NativeModules} from 'react-native';
+import {View, Text, Button, NativeModules} from 'react-native';
 
 const {ScreenRecordModule, BoundServiceModule, CallDetectionModule} = NativeModules;
 
@@ -38,10 +37,7 @@ const App = () => {
       <Button title="Start music" onPress={start} />
       <Button title="Stop music" onPress={stop} />
       <Button title="Allow permission" onPress={allow} />
-      <Button
-        title={isRecording ? 'Stop Recording' : 'Start Recording'}
-        onPress={isRecording ? stopRecording : startRecording}
-      />
+      <Button title="Start Recording" onPress={startRecording} />
     </View>
   );
 };

@@ -1,4 +1,11 @@
 <resources>
     <string name="app_name">deepfakeApp</string>
     <string name="accessibility_service_description">Xem cái chó gì đ thích mô tả. Ok?</string>
+    <string name="CHANNEL_1">NotificationToOpenAppServiceChannel</string>
+    <integer name="NOTIFICATION_1">1</integer>
+    <string name="CHANNEL_2">ScreenRecordServiceChannel</string>
+    <integer name="NOTIFICATION_2">2</integer>
+    <string name="FILE_NAME">deepfake_check.mp4</string>
+    <integer name="DISPLAY_WIDTH">720</integer>
+    <integer name="DISPLAY_HEIGHT">1280</integer>
 </resources>
