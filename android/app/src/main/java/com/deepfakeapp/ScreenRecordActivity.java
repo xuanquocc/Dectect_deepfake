@@ -3,6 +3,7 @@ package com.deepfakeapp;
 import static com.facebook.imagepipeline.nativecode.NativeJpegTranscoder.TAG;
 
 import android.app.Activity;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.hardware.display.DisplayManager;
@@ -61,8 +62,8 @@ public class ScreenRecordActivity extends AppCompatActivity {
             result -> {
                 int resultCode = result.getResultCode();
                 Intent data = result.getData();
-                assert data != null;
                 if (result.getResultCode() == Activity.RESULT_OK) {
+                    assert data != null;
                     mediaProjection = mediaProjectionManager.getMediaProjection(resultCode, data);
                     if (mediaProjection != null) {
                         initRecorder();
@@ -70,7 +71,7 @@ public class ScreenRecordActivity extends AppCompatActivity {
                         startScreenCapture();
                         Toast.makeText(this, "Recording...", Toast.LENGTH_SHORT).show();
                     }
-                } else if (result.getResultCode() == Activity.RESULT_CANCELED) {
+                } else if (resultCode == Activity.RESULT_CANCELED) {
                     Toast.makeText(this, "Screen capture permission not available.", Toast.LENGTH_SHORT).show();
                 }
             });
@@ -90,8 +91,8 @@ public class ScreenRecordActivity extends AppCompatActivity {
         mGetContent.launch(mediaProjectionManager.createScreenCaptureIntent());
 
         // Chạy foreground service (bắt buộc để hiển thị thông báo đang quay trên thanh thông báo)
-        Intent foregroundServiceIntent = new Intent(this, RecordNotificationService.class);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            Intent foregroundServiceIntent = new Intent(this, RecordNotificationService.class);
             startForegroundService(foregroundServiceIntent);
         }
     }
@@ -122,7 +123,17 @@ public class ScreenRecordActivity extends AppCompatActivity {
             mediaProjection.stop();
             mediaProjection = null;
             sendVideoToApi();
+            finish();
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        // Cancel all notifications associated with your activity
+        notificationManager.cancelAll();
     }
 
     private void sendVideoToApi() {
@@ -195,9 +206,11 @@ public class ScreenRecordActivity extends AppCompatActivity {
         mediaProjection.registerCallback(mediaProjectionCallBack, null);
 
         mediaRecorder = new MediaRecorder();
+        mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         mediaRecorder.setVideoSource(MediaRecorder.VideoSource.SURFACE);
         mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
         mediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
+        mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
         mediaRecorder.setVideoEncodingBitRate(512 * 1000);
         mediaRecorder.setVideoFrameRate(30);
         mediaRecorder.setVideoSize(DISPLAY_WIDTH, DISPLAY_HEIGHT);
