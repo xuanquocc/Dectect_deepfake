@@ -10,7 +10,7 @@ import android.os.IBinder;
 import com.deepfakeapp.R;
 
 public class RecordNotificationService extends Service {
-    private static final int NOTIFICATION_ID = 1;
+    private static final int NOTIFICATION_ID = 2;
     private static final String CHANNEL_ID = "ScreenRecordServiceChannel";
 
     @Override
@@ -42,11 +42,6 @@ public class RecordNotificationService extends Service {
             startForeground(NOTIFICATION_ID, notification);
         }
         return START_STICKY;
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
     }
 
     @Override
