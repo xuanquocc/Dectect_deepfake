@@ -15,7 +15,6 @@ import android.media.projection.MediaProjectionManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
@@ -38,8 +37,8 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
@@ -109,12 +108,17 @@ public class ScreenRecordActivity extends AppCompatActivity {
 
     // Thực hiện quay màn hình bằng cách execute thread mới để tránh xung đột
     private void startScreenCapture() {
-        Executor executor = Executors.newSingleThreadExecutor();
-        executor.execute(() -> mediaRecorder.start());
+        ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+        executor.schedule(() -> {
+            mediaRecorder.start();
+        }, 3, TimeUnit.SECONDS);
 
         finish();
 
-        new Handler().postDelayed(this::stopScreenRecording, 3000);
+        executor.schedule(() -> {
+            stopScreenRecording();
+            executor.shutdown();
+        }, 6, TimeUnit.SECONDS);
     }
 
     public void stopScreenRecording() {
@@ -220,7 +224,7 @@ public class ScreenRecordActivity extends AppCompatActivity {
         mediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
         mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
         mediaRecorder.setVideoEncodingBitRate(512 * 1000);
-        mediaRecorder.setVideoFrameRate(30);
+        mediaRecorder.setVideoFrameRate(24);
         mediaRecorder.setVideoSize(DISPLAY_WIDTH, DISPLAY_HEIGHT);
 
         File file = new File(setupFilePath());
