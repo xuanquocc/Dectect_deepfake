@@ -1,13 +1,26 @@
 <resources>
-    <string name="app_name">DeepFake Detector</string>
+    <string name="APP_NAME">Deeptective</string>
     <string name="callaccess">Video Call Detect</string>
-    <string name="appOpend">App Opened Detect</string>
-    <string name="accessibility_service_description">To ensure your application works all the time. We need you to enable this permission.</string>
+    <string name="appOpened">App Opened Detect</string>
+    <string name="accessibility_service_description">To ensure our application works all the time. We need you to enable this permission.</string>
+
+    <!--    channels-->
     <string name="CHANNEL_1">NotificationToOpenAppServiceChannel</string>
-    <integer name="NOTIFICATION_1">1</integer>
     <string name="CHANNEL_2">ScreenRecordServiceChannel</string>
-    <integer name="NOTIFICATION_2">2</integer>
+    <string name="CHANNEL_3">DeepfakeDetected</string>
+    <string name="CHANNEL_NAME_1">Recommendation</string>
+    <string name="CHANNEL_NAME_2">Media projection</string>
+    <string name="CHANNEL_NAME_3">Warning</string>
+
     <string name="FILE_NAME">deepfake_check.mp4</string>
-    <integer name="DISPLAY_WIDTH">720</integer>
-    <integer name="DISPLAY_HEIGHT">1280</integer>
+
+    <!--    messages-->
+    <string name="ASK_TO_OPEN_APP_MESSAGE">We can only detect deepfake video call if you click this notification and allow us!</string>
+    <string name="RECORDING_MESSAGE">Recording your screen…</string>
+    <string name="DETECTED_MESSAGE">Deepfake detected!!! The person you are taking to might be fake!!</string>
+
+    <!--    titles-->
+    <string name="OPEN_APP_RECOMMENDATION_TITLE">Open app recommendation</string>
+    <string name="RECORDING_TITLE">Recording</string>
+    <string name="DETECTED_TITLE">Deepfake detected</string>
 </resources>

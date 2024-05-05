@@ -7,6 +7,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.content.pm.ServiceInfo;
+import android.content.res.Resources;
 import android.os.Build;
 import android.os.IBinder;
 
@@ -14,20 +15,29 @@ import com.deepfakeapp.R;
 import com.deepfakeapp.ScreenRecordActivity;
 
 public class NotificationToOpenAppService extends Service {
+
     private int NOTIFICATION_ID;
     private String CHANNEL_ID;
+    private CharSequence CHANNEL_NAME;
+    private CharSequence TITLE;
+    private CharSequence CONTENT_TEXT;
 
+    // Create a notification channel for Android Oreo and above
     @Override
     public void onCreate() {
         super.onCreate();
 
-        NOTIFICATION_ID = getApplicationContext().getResources().getInteger(R.integer.NOTIFICATION_1);
-        CHANNEL_ID = getApplicationContext().getResources().getString(R.string.CHANNEL_1);
+        Resources res = getApplicationContext().getResources();
+        NOTIFICATION_ID = res.getInteger(R.integer.NOTIFICATION_1);
+        CHANNEL_ID = res.getString(R.string.CHANNEL_1);
+        CHANNEL_NAME = res.getString(R.string.CHANNEL_NAME_1);
+        TITLE = res.getString(R.string.OPEN_APP_RECOMMENDATION_TITLE);
+        CONTENT_TEXT = res.getString(R.string.ASK_TO_OPEN_APP_MESSAGE);
 
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(
                     CHANNEL_ID,
-                    "Notification to open app",
+                    CHANNEL_NAME,
                     NotificationManager.IMPORTANCE_LOW
             );
             NotificationManager notificationManager = getSystemService(NotificationManager.class);
@@ -35,7 +45,6 @@ public class NotificationToOpenAppService extends Service {
         }
     }
 
-    // Create a notification channel for Android Oreo and above
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
@@ -47,8 +56,8 @@ public class NotificationToOpenAppService extends Service {
         // Create a notification for the foreground service
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             Notification notification = new Notification.Builder(this, CHANNEL_ID)
-                    .setContentTitle("ninja gi gi do")
-                    .setContentText("We can only detect deepfake video call if you click this notification and allow us!")
+                    .setContentTitle(TITLE)
+                    .setContentText(CONTENT_TEXT)
                     .setSmallIcon(R.mipmap.ic_launcher)
                     .setContentIntent(pendingIntent)
                     .setAutoCancel(true)
