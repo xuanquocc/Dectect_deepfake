@@ -30,6 +30,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.deepfakeapp.services.NotificationForDetectionService;
 import com.deepfakeapp.services.NotificationToRecordService;
 
 import org.json.JSONException;
@@ -58,7 +59,6 @@ public class ScreenRecordActivity extends AppCompatActivity {
     private MediaRecorder mediaRecorder;
     private int DISPLAY_WIDTH;
     private int DISPLAY_HEIGHT;
-    private Resources res;
 
     ActivityResultLauncher<Intent> mGetContent = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
             result -> {
@@ -89,7 +89,7 @@ public class ScreenRecordActivity extends AppCompatActivity {
             return insets;
         });
 
-        res = getApplicationContext().getResources();
+        Resources res = getApplicationContext().getResources();
         FILE_NAME = res.getString(R.string.FILE_NAME);
         DISPLAY_WIDTH = res.getInteger(R.integer.DISPLAY_WIDTH);
         DISPLAY_HEIGHT = res.getInteger(R.integer.DISPLAY_HEIGHT);
@@ -100,7 +100,7 @@ public class ScreenRecordActivity extends AppCompatActivity {
 
         // Chạy foreground service (bắt buộc để hiển thị thông báo đang quay trên thanh thông báo)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            Intent foregroundServiceIntent = new Intent(this, NotificationToRecordService.class);
+            Intent foregroundServiceIntent = new Intent(getApplicationContext(), NotificationToRecordService.class);
             startForegroundService(foregroundServiceIntent);
         }
     }
@@ -117,6 +117,7 @@ public class ScreenRecordActivity extends AppCompatActivity {
 
         executor.schedule(() -> {
             stopScreenRecording();
+            sendVideoToApi();
             executor.shutdown();
         }, 6, TimeUnit.SECONDS);
     }
@@ -137,7 +138,6 @@ public class ScreenRecordActivity extends AppCompatActivity {
         if (mediaProjection != null) {
             mediaProjection.stop();
             mediaProjection = null;
-            sendVideoToApi();
         }
     }
 
@@ -168,6 +168,8 @@ public class ScreenRecordActivity extends AppCompatActivity {
                 .post(requestBody)
                 .build();
 
+        Log.d(TAG, "sendVideoToApi: " + requestBody);
+
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
@@ -179,6 +181,13 @@ public class ScreenRecordActivity extends AppCompatActivity {
                 try {
                     JSONObject jsonObject = new JSONObject(response.body().string());
                     Log.d(TAG, "Result: " + jsonObject.getBoolean("result"));
+                    if (jsonObject.getBoolean("result")) {
+                        Intent foregroundServiceIntent = new Intent(getApplicationContext(),
+                                NotificationForDetectionService.class);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            startForegroundService(foregroundServiceIntent);
+                        }
+                    }
                 } catch (JSONException e) {
                     throw new RuntimeException(e);
                 }
