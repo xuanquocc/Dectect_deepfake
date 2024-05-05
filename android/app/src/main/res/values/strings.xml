@@ -1,6 +1,8 @@
 <resources>
-    <string name="app_name">deepfakeApp</string>
-    <string name="accessibility_service_description">Xem cái chó gì đ thích mô tả. Ok?</string>
+    <string name="app_name">DeepFake Detector</string>
+    <string name="callaccess">Video Call Detect</string>
+    <string name="appOpend">App Opened Detect</string>
+    <string name="accessibility_service_description">To ensure your application works all the time. We need you to enable this permission.</string>
     <string name="CHANNEL_1">NotificationToOpenAppServiceChannel</string>
     <integer name="NOTIFICATION_1">1</integer>
     <string name="CHANNEL_2">ScreenRecordServiceChannel</string>

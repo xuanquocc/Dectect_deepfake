@@ -2,18 +2,23 @@ import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
-  Button,
   NativeModules,
   ImageBackground,
   StyleSheet,
   TouchableOpacity,
-  Linking 
+  Linking,
+  Platform,
+  PermissionsAndroid,
+  Alert,
 } from 'react-native';
 import moment from 'moment';
 
+const {BoundServiceModule} = NativeModules;
 const App = () => {
   const [isDayTime, setIsDayTime] = useState(true);
   const [currentDate, setCurrentDate] = useState('');
+  const [isOnAccessibility, setAccessibility] = useState(true);
+  const [havePermission, setHavePermisson] = useState(true);
   // Kiểm tra thời gian ban ngày hoặc ban đêm
   useEffect(() => {
     const currentTime = moment().format('HH:mm');
@@ -21,12 +26,68 @@ const App = () => {
     // Xác định thời gian ban ngày hoặc ban đêm
     setIsDayTime(hour >= 6 && hour < 18);
     setCurrentDate(moment().format('DD MMMM, YYYY'));
-  }, []);
-  const openEvent = () => 
-    {
-      const youtubeURL = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'; // Đường dẫn của trang web YouTube bạn muốn mở
-      Linking.openURL(youtubeURL);
+  }, [havePermission]);
+  const allow = () => {
+    BoundServiceModule.allowPermission();
+  };
+  const setOnAccessibility = () => {
+    if (!isOnAccessibility) {
+      allow();
+      setAccessibility(!isOnAccessibility);
     }
+    setAccessibility(!isOnAccessibility);
+  };
+  const setPermission = async () => {
+    Linking.openSettings();
+  };
+  const checkApplicationPermissions = async () => {
+    if (Platform.OS === 'android') {
+      try {
+        await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.CAMERA);
+        await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+        );
+        await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
+        );
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  };
+
+  useEffect(() => {
+    checkApplicationPermissions();
+    if (PermissionsAndroid.RESULTS.DENIED) {
+      setHavePermisson(false);
+    }
+    const requestPermission = async () => {
+      try {
+        const cameraPermission = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.CAMERA,
+        );
+        const notifyPermission = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+        );
+        const audioPermission = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
+        );
+        if (
+          cameraPermission != 'granted' ||
+          notifyPermission != 'granted' ||
+          audioPermission != 'granted'
+        ) {
+          setHavePermisson(false);
+        } else {
+          setHavePermisson(true);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    };
+
+    requestPermission();
+  }, []);
   return (
     <ImageBackground
       source={isDayTime ? require('./day.jpg') : require('./night.jpg')}
@@ -34,29 +95,59 @@ const App = () => {
       <View style={styles.item}>
         <Text
           style={[styles.textIntr, {color: isDayTime ? '#1D548A' : 'white'}]}>
-          WELCOME BACK, MY NIGGAR
+          Welcome back, {isDayTime ? 'Good Morning' : 'Good Evening'}
         </Text>
         <Text
           style={[styles.textDate, {color: isDayTime ? '#1D548A' : 'white'}]}>
-           {currentDate}
+          {currentDate}
         </Text>
 
         <View style={styles.box}>
           <Text style={styles.boxText}>The number has been detected.</Text>
-          <Text style={styles.boxNumber}>1000</Text>
+          <Text style={styles.boxNumber}>2 Case</Text>
         </View>
         <Text
           style={[
             styles.question,
             {color: isDayTime ? '#1D548A' : 'white', marginTop: 200},
           ]}>
-          Why are you gay?
+          What do you need today?
         </Text>
         <View style={styles.settingsContainer}>
-          <TouchableOpacity style={styles.settingsButton} onPress={openEvent}>
-            <Text style={styles.icon}>⚙️</Text>
+          <TouchableOpacity
+            style={[
+              styles.outter,
+              isOnAccessibility
+                ? {justifyContent: 'flex-end', backgroundColor: 'green'}
+                : {justifyContent: 'flex-start', backgroundColor: 'gray'},
+            ]}
+            activeOpacity={1}
+            onPress={setOnAccessibility}>
+            <View style={[styles.inner]} />
           </TouchableOpacity>
-          <Text style={styles.settingsText}>Gỡ cài đặt</Text>
+          <Text style={styles.settingsText}>
+            {isOnAccessibility
+              ? `Awesome! You have granted us Accessibility permission.`
+              : `Accept our app access your accesibility`}
+          </Text>
+        </View>
+        <View style={styles.settingsContainer}>
+          <TouchableOpacity
+            style={[
+              styles.outter,
+              havePermission
+                ? {justifyContent: 'flex-end', backgroundColor: 'green'}
+                : {justifyContent: 'flex-start', backgroundColor: 'gray'},
+            ]}
+            activeOpacity={1}
+            onPress={setPermission}>
+            <View style={[styles.inner]} />
+          </TouchableOpacity>
+          <Text style={styles.settingsText}>
+            {havePermission
+              ? `Hooray, We're have enough permissions to lauch our app`
+              : `Oh no,Please give us your permisson`}
+          </Text>
         </View>
       </View>
     </ImageBackground>
@@ -104,7 +195,7 @@ const styles = StyleSheet.create({
   },
   boxNumber: {
     paddingTop: 20,
-    color: 'green', 
+    color: 'green',
   },
   question: {
     fontSize: 22,
@@ -116,22 +207,32 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 20,
   },
-  settingsButton: {
-    padding: 10,
-    borderRadius: 30,
-    backgroundColor: '#f0f0f0',
-    alignItems: 'center',
-    width: 60,
-  },
-  icon: {
-    fontSize: 30,
-  },
+
   settingsText: {
     fontSize: 18,
     marginLeft: 20,
     fontFamily: 'Helvetica Neue',
     fontWeight: 'bold',
     color: 'white',
+  },
+  inner: {
+    width: 26,
+    height: 26,
+    backgroundColor: 'white',
+    borderRadius: 15,
+    elevation: 8,
+    shadowOffset: {width: 0, height: 0},
+    shadowOpacity: 0.15,
+    shadowRadius: 2,
+  },
+  outter: {
+    width: 60,
+    height: 30,
+    backgroundColor: 'gray',
+    borderRadius: 15,
+    paddingHorizontal: 2,
+    alignItems: 'center',
+    flexDirection: 'row',
   },
 });
 export default App;
