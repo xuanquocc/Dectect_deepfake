@@ -16,7 +16,10 @@ public class CallDetectionService extends AccessibilityService {
         if (eventType == AccessibilityEvent.TYPE_NOTIFICATION_STATE_CHANGED) {
             // Kiểm tra thông báo
             String eventText = event.getPackageName().toString();
-            if ((("com.facebook.orca".equals(eventText) && event.getParcelableData().toString().contains("voip_incoming")) || ("com.zing.zalo".equals(eventText) && event.getParcelableData().toString().contains("call_channel")))) {
+            if ((("com.facebook.orca".equals(eventText)
+                    && event.getParcelableData().toString().contains("voip_incoming"))
+                    || ("com.zing.zalo".equals(eventText)
+                    && event.getParcelableData().toString().contains("call_channel")))) {
                 Intent foregroundServiceIntent = new Intent(this, NotificationToOpenAppService.class);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     startForegroundService(foregroundServiceIntent);
