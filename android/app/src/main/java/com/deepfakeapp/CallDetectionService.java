@@ -22,7 +22,8 @@ public class CallDetectionService extends AccessibilityService {
                     && event.getParcelableData().toString().contains("voip_incoming"))
                     || ("com.zing.zalo".equals(eventText)
                     && event.getParcelableData().toString().contains("call_channel")))) {
-                NotificationToOpenApp.showNotification(this);
+                NotificationToOpenApp notification = new NotificationToOpenApp(this);
+                notification.showNotification();
             }
         }
     }
