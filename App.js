@@ -103,51 +103,55 @@ const App = () => {
         </Text>
 
         <View style={styles.box}>
-          <Text style={styles.boxText}>The number has been detected.</Text>
-          <Text style={styles.boxNumber}>2 Case</Text>
+          <Text style={styles.boxText}>
+            Number of cases that we've detected
+          </Text>
+          <Text style={styles.boxNumber}>2</Text>
         </View>
         <Text
           style={[
             styles.question,
-            {color: isDayTime ? '#1D548A' : 'white', marginTop: 200},
+            {color: isDayTime ? '#1D548A' : 'white', marginTop: 150},
           ]}>
           What do you need today?
         </Text>
-        <View style={styles.settingsContainer}>
-          <TouchableOpacity
-            style={[
-              styles.outter,
-              isOnAccessibility
-                ? {justifyContent: 'flex-end', backgroundColor: 'green'}
-                : {justifyContent: 'flex-start', backgroundColor: 'gray'},
-            ]}
-            activeOpacity={1}
-            onPress={setOnAccessibility}>
-            <View style={[styles.inner]} />
-          </TouchableOpacity>
-          <Text style={styles.settingsText}>
-            {isOnAccessibility
-              ? `Awesome! You have granted us Accessibility permission.`
-              : `Accept our app access your accesibility`}
-          </Text>
-        </View>
-        <View style={styles.settingsContainer}>
-          <TouchableOpacity
-            style={[
-              styles.outter,
-              havePermission
-                ? {justifyContent: 'flex-end', backgroundColor: 'green'}
-                : {justifyContent: 'flex-start', backgroundColor: 'gray'},
-            ]}
-            activeOpacity={1}
-            onPress={setPermission}>
-            <View style={[styles.inner]} />
-          </TouchableOpacity>
-          <Text style={styles.settingsText}>
-            {havePermission
-              ? `Hooray, We're have enough permissions to lauch our app`
-              : `Oh no,Please give us your permisson`}
-          </Text>
+        <View style={styles.settings}>
+          <View style={styles.settingsContainer}>
+            <TouchableOpacity
+              style={[
+                styles.outter,
+                isOnAccessibility
+                  ? {justifyContent: 'flex-end', backgroundColor: 'green'}
+                  : {justifyContent: 'flex-start', backgroundColor: 'gray'},
+              ]}
+              activeOpacity={1}
+              onPress={setOnAccessibility}>
+              <View style={[styles.inner]} />
+            </TouchableOpacity>
+            <Text style={styles.settingsText}>
+              {isOnAccessibility
+                ? 'Permission granted, \nfeeling blessed! 🤤'
+                : 'Accessibility permission needed, \nplease turn it on. 🥷'}
+            </Text>
+          </View>
+          <View style={styles.settingsContainer}>
+            <TouchableOpacity
+              style={[
+                styles.outter,
+                havePermission
+                  ? {justifyContent: 'flex-end', backgroundColor: 'green'}
+                  : {justifyContent: 'flex-start', backgroundColor: 'gray'},
+              ]}
+              activeOpacity={1}
+              onPress={setPermission}>
+              <View style={[styles.inner]} />
+            </TouchableOpacity>
+            <Text style={styles.settingsText}>
+              {havePermission
+                ? 'Additional permissions\n are all set!! 😎'
+                : 'Oh no, not just accessibility permission.\n We also need some more to help you! 😜'}
+            </Text>
+          </View>
         </View>
       </View>
     </ImageBackground>
@@ -158,26 +162,31 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
   },
+
   item: {
     flex: 1,
     padding: 50,
   },
+
   textIntr: {
     fontSize: 30,
     fontFamily: 'Helvetica Neue',
     fontWeight: 'bold',
   },
+
   textDate: {
     fontSize: 15,
     fontFamily: 'Helvetica Neue',
     fontWeight: 'bold',
   },
+
   box: {
     width: '100%',
-    height: 100,
+    height: 135,
     backgroundColor: 'white',
     alignItems: 'center',
-    marginTop: 200,
+    marginTop: 140,
+    padding: 20,
     borderRadius: 10,
     shadowColor: 'rgba(0, 0, 255, 1.6)',
     shadowOffset: {
@@ -188,33 +197,49 @@ const styles = StyleSheet.create({
     shadowRadius: 10,
     elevation: 10,
   },
+
   boxText: {
-    paddingTop: 20,
+    paddingBottom: 20,
     color: 'black',
     fontSize: 18,
   },
+
   boxNumber: {
-    paddingTop: 20,
+    fontSize: 25,
     color: 'green',
   },
+
   question: {
-    fontSize: 22,
+    fontSize: 25,
     fontFamily: 'Helvetica Neue',
     fontWeight: 'bold',
   },
+
+  settings: {
+    marginTop: 20,
+    paddingBottom: 20,
+    paddingHorizontal: 10,
+    borderRadius: 10,
+    flexDirection: 'col',
+    justifyContent: 'space-between',
+    alignItems: 'left',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+
   settingsContainer: {
+    marginTop: 20,
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 20,
   },
 
   settingsText: {
-    fontSize: 18,
+    fontSize: 20,
     marginLeft: 20,
     fontFamily: 'Helvetica Neue',
     fontWeight: 'bold',
     color: 'white',
   },
+
   inner: {
     width: 26,
     height: 26,
@@ -225,6 +250,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.15,
     shadowRadius: 2,
   },
+
   outter: {
     width: 60,
     height: 30,
