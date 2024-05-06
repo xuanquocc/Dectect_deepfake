@@ -30,7 +30,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.deepfakeapp.services.NotificationForDetectionService;
+import com.deepfakeapp.notifications.NotificationForDetection;
 import com.deepfakeapp.services.NotificationToRecordService;
 
 import org.json.JSONException;
@@ -182,11 +182,7 @@ public class ScreenRecordActivity extends AppCompatActivity {
                     JSONObject jsonObject = new JSONObject(response.body().string());
                     Log.d(TAG, "Result: " + jsonObject.getBoolean("result"));
                     if (jsonObject.getBoolean("result")) {
-                        Intent foregroundServiceIntent = new Intent(getApplicationContext(),
-                                NotificationForDetectionService.class);
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                            startForegroundService(foregroundServiceIntent);
-                        }
+                        NotificationForDetection.showNotification(ScreenRecordActivity.this);
                     }
                 } catch (JSONException e) {
                     throw new RuntimeException(e);
@@ -235,20 +231,6 @@ public class ScreenRecordActivity extends AppCompatActivity {
         mediaRecorder.setVideoEncodingBitRate(512 * 1000);
         mediaRecorder.setVideoFrameRate(24);
         mediaRecorder.setVideoSize(DISPLAY_WIDTH, DISPLAY_HEIGHT);
-
-        File file = new File(setupFilePath());
-        if (file.exists()) {
-            // Nếu tệp tồn tại, xóa nó
-            boolean deleted = file.delete();
-            if (deleted) {
-                Log.d(TAG, "File deleted successfully");
-            } else {
-                Log.e(TAG, "Failed to delete file");
-            }
-        } else {
-            Log.d(TAG, "File does not exist");
-        }
-
         mediaRecorder.setOutputFile(setupFilePath());
 
         try {
