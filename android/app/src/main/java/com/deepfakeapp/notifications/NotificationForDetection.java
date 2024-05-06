@@ -17,7 +17,13 @@ import com.deepfakeapp.R;
 import com.deepfakeapp.ScreenRecordActivity;
 
 public class NotificationForDetection {
-    public static void showNotification(Context context) {
+    private final Context context;
+
+    public NotificationForDetection(Context context) {
+        this.context = context;
+    }
+
+    public void showNotification() {
         Resources res = context.getResources();
         int NOTIFICATION_ID = res.getInteger(R.integer.NOTIFICATION_3);
         String CHANNEL_ID = res.getString(R.string.CHANNEL_3);

@@ -15,9 +15,14 @@ import com.deepfakeapp.R;
 import com.deepfakeapp.ScreenRecordActivity;
 
 public class NotificationToOpenApp {
+    private final Context context;
+
+    public NotificationToOpenApp(Context context) {
+        this.context = context;
+    }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public static void showNotification(Context context) {
+    public void showNotification() {
         Resources res = context.getResources();
         int NOTIFICATION_ID = res.getInteger(R.integer.NOTIFICATION_1);
         String CHANNEL_ID = res.getString(R.string.CHANNEL_1);
@@ -42,7 +47,7 @@ public class NotificationToOpenApp {
                 .setContentTitle(TITLE)
                 .setContentText(CONTENT_TEXT)
                 .setContentIntent(pendingIntent)
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setPriority(NotificationCompat.PRIORITY_LOW)
                 .setAutoCancel(true);
 
         notificationManager.notify(NOTIFICATION_ID, builder.build());

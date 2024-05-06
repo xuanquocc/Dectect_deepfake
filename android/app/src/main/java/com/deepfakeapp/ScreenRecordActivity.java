@@ -182,7 +182,8 @@ public class ScreenRecordActivity extends AppCompatActivity {
                     JSONObject jsonObject = new JSONObject(response.body().string());
                     Log.d(TAG, "Result: " + jsonObject.getBoolean("result"));
                     if (jsonObject.getBoolean("result")) {
-                        NotificationForDetection.showNotification(ScreenRecordActivity.this);
+                        NotificationForDetection notification = new NotificationForDetection(ScreenRecordActivity.this);
+                        notification.showNotification();
                     }
                 } catch (JSONException e) {
                     throw new RuntimeException(e);
