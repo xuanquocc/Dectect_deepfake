@@ -2,14 +2,16 @@ package com.deepfakeapp;
 
 import android.accessibilityservice.AccessibilityService;
 import android.accessibilityservice.AccessibilityServiceInfo;
-import android.content.Intent;
 import android.os.Build;
 import android.view.accessibility.AccessibilityEvent;
 
-import com.deepfakeapp.services.NotificationToOpenAppService;
+import androidx.annotation.RequiresApi;
+
+import com.deepfakeapp.notifications.NotificationToOpenApp;
 
 public class CallDetectionService extends AccessibilityService {
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {
         int eventType = event.getEventType();
@@ -20,10 +22,7 @@ public class CallDetectionService extends AccessibilityService {
                     && event.getParcelableData().toString().contains("voip_incoming"))
                     || ("com.zing.zalo".equals(eventText)
                     && event.getParcelableData().toString().contains("call_channel")))) {
-                Intent foregroundServiceIntent = new Intent(this, NotificationToOpenAppService.class);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    startForegroundService(foregroundServiceIntent);
-                }
+                NotificationToOpenApp.showNotification(this);
             }
         }
     }
