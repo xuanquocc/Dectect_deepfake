@@ -119,7 +119,7 @@ public class ScreenRecordActivity extends AppCompatActivity {
             stopScreenRecording();
             sendVideoToApi();
             executor.shutdown();
-        }, 6, TimeUnit.SECONDS);
+        }, 7, TimeUnit.SECONDS);
     }
 
     public void stopScreenRecording() {
