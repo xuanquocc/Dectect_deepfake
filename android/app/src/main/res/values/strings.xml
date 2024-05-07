@@ -7,10 +7,10 @@
     <!--    channels-->
     <string name="CHANNEL_1">NotificationToOpenAppServiceChannel</string>
     <string name="CHANNEL_2">ScreenRecordServiceChannel</string>
-    <string name="CHANNEL_3">DeepfakeDetected</string>
+    <string name="CHANNEL_3">DeepfakeDetection</string>
     <string name="CHANNEL_NAME_1">Recommendation</string>
     <string name="CHANNEL_NAME_2">Media projection</string>
-    <string name="CHANNEL_NAME_3">Warning</string>
+    <string name="CHANNEL_NAME_3">Information</string>
 
     <string name="FILE_NAME">deepfake_check.mp4</string>
 
@@ -18,9 +18,11 @@
     <string name="ASK_TO_OPEN_APP_MESSAGE">We can only detect deepfake video call if you click this notification and allow us!</string>
     <string name="RECORDING_MESSAGE">Recording your screen…</string>
     <string name="DETECTED_MESSAGE">Deepfake detected!!! The person you are taking to might be fake!!</string>
+    <string name="NOT_DETECTED_MESSAGE">We can\'t detected any deepfake, but keep your eyes up!</string>
 
     <!--    titles-->
     <string name="OPEN_APP_RECOMMENDATION_TITLE">Open app recommendation</string>
     <string name="RECORDING_TITLE">Recording</string>
     <string name="DETECTED_TITLE">Deepfake detected</string>
+    <string name="NOT_DETECTED_TITLE">No deepfake detected</string>
 </resources>

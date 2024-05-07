@@ -109,9 +109,7 @@ public class ScreenRecordActivity extends AppCompatActivity {
     // Thực hiện quay màn hình bằng cách execute thread mới để tránh xung đột
     private void startScreenCapture() {
         ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
-        executor.schedule(() -> {
-            mediaRecorder.start();
-        }, 3, TimeUnit.SECONDS);
+        executor.schedule(() -> mediaRecorder.start(), 3, TimeUnit.SECONDS);
 
         finish();
 
@@ -173,16 +171,17 @@ public class ScreenRecordActivity extends AppCompatActivity {
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                if (!response.isSuccessful()) {
+                if (!response.isSuccessful() || response.body() == null) {
                     throw new IOException("Unexpected code " + response);
                 }
 
                 // Read the response
                 try {
                     JSONObject jsonObject = new JSONObject(response.body().string());
-                    Log.d(TAG, "Result: " + jsonObject.getBoolean("result"));
-                    if (jsonObject.getBoolean("result")) {
-                        NotificationForDetection notification = new NotificationForDetection(ScreenRecordActivity.this);
+                    boolean result = jsonObject.getBoolean("result");
+                    Log.d(TAG, "Result: " + result);
+                    NotificationForDetection notification = new NotificationForDetection(ScreenRecordActivity.this, result);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                         notification.showNotification();
                     }
                 } catch (JSONException e) {
