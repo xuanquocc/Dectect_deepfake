@@ -59,6 +59,7 @@ public class ScreenRecordActivity extends AppCompatActivity {
     private MediaRecorder mediaRecorder;
     private int DISPLAY_WIDTH;
     private int DISPLAY_HEIGHT;
+    private Intent foregroundServiceIntent;
 
     ActivityResultLauncher<Intent> mGetContent = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
             result -> {
@@ -100,7 +101,7 @@ public class ScreenRecordActivity extends AppCompatActivity {
 
         // Chạy foreground service (bắt buộc để hiển thị thông báo đang quay trên thanh thông báo)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            Intent foregroundServiceIntent = new Intent(getApplicationContext(), NotificationToRecordService.class);
+            foregroundServiceIntent = new Intent(getApplicationContext(), NotificationToRecordService.class);
             startForegroundService(foregroundServiceIntent);
         }
     }
@@ -137,6 +138,7 @@ public class ScreenRecordActivity extends AppCompatActivity {
             mediaProjection.stop();
             mediaProjection = null;
         }
+        stopService(foregroundServiceIntent);
     }
 
     @Override

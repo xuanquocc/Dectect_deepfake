@@ -10,6 +10,8 @@ import android.content.res.Resources;
 import android.os.Build;
 import android.os.IBinder;
 
+import androidx.annotation.RequiresApi;
+
 import com.deepfakeapp.R;
 
 public class NotificationToRecordService extends Service {
@@ -59,6 +61,22 @@ public class NotificationToRecordService extends Service {
             }
         }
         return START_STICKY;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        // Dừng foreground service
+        stopForeground(STOP_FOREGROUND_REMOVE);
+
+        // Xóa notification sau khi dừng foreground service
+        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        notificationManager.cancel(NOTIFICATION_ID);
+
+        // Dừng service
+        stopSelf();
     }
 
     @Override
