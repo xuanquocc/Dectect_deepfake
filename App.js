@@ -101,13 +101,6 @@ const App = () => {
           style={[styles.textDate, {color: isDayTime ? '#1D548A' : 'white'}]}>
           {currentDate}
         </Text>
-
-        <View style={styles.box}>
-          <Text style={styles.boxText}>
-            Number of cases that we've detected
-          </Text>
-          <Text style={styles.boxNumber}>2</Text>
-        </View>
         <Text
           style={[
             styles.question,
@@ -179,36 +172,6 @@ const styles = StyleSheet.create({
     fontFamily: 'Helvetica Neue',
     fontWeight: 'bold',
   },
-
-  box: {
-    width: '100%',
-    height: 135,
-    backgroundColor: 'white',
-    alignItems: 'center',
-    marginTop: 140,
-    padding: 20,
-    borderRadius: 10,
-    shadowColor: 'rgba(0, 0, 255, 1.6)',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.5,
-    shadowRadius: 10,
-    elevation: 10,
-  },
-
-  boxText: {
-    paddingBottom: 20,
-    color: 'black',
-    fontSize: 18,
-  },
-
-  boxNumber: {
-    fontSize: 25,
-    color: 'green',
-  },
-
   question: {
     fontSize: 25,
     fontFamily: 'Helvetica Neue',
@@ -216,7 +179,7 @@ const styles = StyleSheet.create({
   },
 
   settings: {
-    marginTop: 20,
+    marginTop: '30%',
     paddingBottom: 20,
     paddingHorizontal: 10,
     borderRadius: 10,
@@ -233,7 +196,7 @@ const styles = StyleSheet.create({
   },
 
   settingsText: {
-    fontSize: 20,
+    fontSize: 14,
     marginLeft: 20,
     fontFamily: 'Helvetica Neue',
     fontWeight: 'bold',
@@ -241,8 +204,8 @@ const styles = StyleSheet.create({
   },
 
   inner: {
-    width: 26,
-    height: 26,
+    width: 25,
+    height: 25,
     backgroundColor: 'white',
     borderRadius: 15,
     elevation: 8,
@@ -252,7 +215,7 @@ const styles = StyleSheet.create({
   },
 
   outter: {
-    width: 60,
+    width: 50,
     height: 30,
     backgroundColor: 'gray',
     borderRadius: 15,
