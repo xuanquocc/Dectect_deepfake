@@ -2,6 +2,7 @@ package com.deepfakeapp;
 
 import static com.facebook.imagepipeline.nativecode.NativeJpegTranscoder.TAG;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.NotificationManager;
 import android.content.Context;
@@ -21,14 +22,10 @@ import android.view.Display;
 import android.view.WindowManager;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.deepfakeapp.notifications.NotificationForDetection;
 import com.deepfakeapp.services.NotificationToRecordService;
@@ -79,16 +76,11 @@ public class ScreenRecordActivity extends AppCompatActivity {
                 }
             });
 
+    @SuppressLint("NewApi")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_screen_record);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
 
         Resources res = getApplicationContext().getResources();
         FILE_NAME = res.getString(R.string.FILE_NAME);
@@ -99,11 +91,8 @@ public class ScreenRecordActivity extends AppCompatActivity {
 
         mGetContent.launch(mediaProjectionManager.createScreenCaptureIntent());
 
-        // Chạy foreground service (bắt buộc để hiển thị thông báo đang quay trên thanh thông báo)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            foregroundServiceIntent = new Intent(getApplicationContext(), NotificationToRecordService.class);
-            startForegroundService(foregroundServiceIntent);
-        }
+        foregroundServiceIntent = new Intent(getApplicationContext(), NotificationToRecordService.class);
+        startForegroundService(foregroundServiceIntent);
     }
 
 

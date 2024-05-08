@@ -41,7 +41,9 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".ScreenRecordActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.AppCompat.Transparent.NoActionBar"
+            />
         <activity
             android:name=".MainActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize|smallestScreenSize|uiMode"
