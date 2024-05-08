@@ -29,15 +29,18 @@ public class NotificationForDetection {
         CharSequence TITLE;
         CharSequence CONTENT_TEXT;
         int IMPORTANCE;
+        int PRIORITY;
 
         if (isDetected) {
             TITLE = res.getString(R.string.DETECTED_TITLE);
             CONTENT_TEXT = res.getString(R.string.DETECTED_MESSAGE);
             IMPORTANCE = NotificationManager.IMPORTANCE_HIGH;
+            PRIORITY = NotificationCompat.PRIORITY_HIGH;
         } else {
             TITLE = res.getString(R.string.NOT_DETECTED_TITLE);
             CONTENT_TEXT = res.getString(R.string.NOT_DETECTED_MESSAGE);
             IMPORTANCE = NotificationManager.IMPORTANCE_LOW;
+            PRIORITY = NotificationCompat.PRIORITY_LOW;
         }
 
         NotificationChannel channel = new NotificationChannel(
@@ -51,7 +54,8 @@ public class NotificationForDetection {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle(TITLE)
-                .setContentText(CONTENT_TEXT);
+                .setContentText(CONTENT_TEXT)
+                .setPriority(PRIORITY);
 
         notificationManager.notify(NOTIFICATION_ID, builder.build());
     }
