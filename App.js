@@ -123,8 +123,8 @@ const App = () => {
             </TouchableOpacity>
             <Text style={styles.settingsText}>
               {isOnAccessibility
-                ? 'Permission granted, \nfeeling blessed! 🤤'
-                : 'Accessibility permission needed, \nplease turn it on. 🥷'}
+                ? 'Permission granted, feeling blessed! 🤤'
+                : 'Accessibility permission needed, please turn it on. 🥷'}
             </Text>
           </View>
           <View style={styles.settingsContainer}>
@@ -141,8 +141,8 @@ const App = () => {
             </TouchableOpacity>
             <Text style={styles.settingsText}>
               {havePermission
-                ? 'Additional permissions\n are all set!! 😎'
-                : 'Oh no, not just accessibility permission.\n We also need some more to help you! 😜'}
+                ? 'Additional permissions are all set!! 😎'
+                : 'Oh no, not just accessibility permission. We also need some more to help you! 😜'}
             </Text>
           </View>
         </View>
@@ -193,6 +193,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
     flexDirection: 'row',
     alignItems: 'center',
+    width: 180,
   },
 
   settingsText: {
