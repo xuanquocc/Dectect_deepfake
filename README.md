@@ -1,5 +1,5 @@
 # Requires
-Android API level < 34
+Android API level <= 34
 
 ## Introduction
 This product help everyone can detect deepface when video call with someone. This is best solution for saving your infomation on the internet
