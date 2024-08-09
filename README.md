@@ -2,7 +2,7 @@
 Android API level <= 34
 
 ## Introduction
-This product help everyone can detect deepface when video call with someone. This is best solution for saving your infomation on the internet
+This product help everyone detect deepfake from a video call on android. Help user avoid being scammed.
 
 ## App Description
 This React Native application is designed to [describe the purpose of the app and its features briefly]. It leverages React Native to build a cross-platform mobile application for [state the target platform, e.g., Android].
